@@ -193,14 +193,13 @@ class Screens:
         pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, 43, 90, 1))
         pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, 90, 90, 1))
 
-        count, lastY = [0, 0], 0
+        count, afterPaletteY = [0, 0], 0
         for i in colors:
             for j in i:
                 LT = (5 + 6 + (21 * count[0]) + (7 * count[0]), 98 + (21 * count[1]) + (7 * count[1]))
-
+                afterPaletteY = LT[1] + 28
                 pygame.draw.rect(ramka, j, pygame.Rect(LT[0], LT[1], 21, 21), 0, 4)
                 LT = (LT[0] + ramkaPos[0], LT[1] + ramkaPos[1])
-                lastY = LT[1] + ramkaPos[1]
                 if IN_check_2D(LT, (LT[0] + 21, LT[1] + 21), LAST_MOUSE_POSITION):
                     if L_MOUSE_HOLD:
                         PROJ["Params"]["PrimaryColor"] = j
@@ -209,6 +208,12 @@ class Screens:
                 count[1] += 1
             count[0] += 1
             count[1] = 0
+
+        pygame.draw.rect(ramka, PROJ["Params"]["SecondaryColor"], pygame.Rect(45, afterPaletteY + 10, 21, 21), 0, 4)
+        pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(45, afterPaletteY + 10, 21, 21), 1, 4)
+        pygame.draw.rect(ramka, PROJ["Params"]["PrimaryColor"], pygame.Rect(35, afterPaletteY, 21, 21), 0, 4)
+        pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(35, afterPaletteY, 21, 21), 1, 4)
+        pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, afterPaletteY + 38, 90, 1))
 
         scr.blit(ramka, ramkaPos)
         scr.blit(IMG['EDLogoGUI'], (16, 58))
