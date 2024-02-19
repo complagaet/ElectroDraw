@@ -33,6 +33,8 @@ def getIMG():
         "32": pygame.image.load('content/32.png'),
         "64": pygame.image.load('content/64.png'),
         "128": pygame.image.load('content/128.png'),
+        "HEXBig": pygame.image.load('content/HEXBig.png'),
+        "HEXIco": pygame.image.load('content/HEXIco.png')
     }
 
 

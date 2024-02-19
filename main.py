@@ -196,7 +196,7 @@ class Screens:
         count, afterPaletteY = [0, 0], 0
         for i in colors:
             for j in i:
-                LT = (5 + 6 + (21 * count[0]) + (7 * count[0]), 98 + (21 * count[1]) + (7 * count[1]))
+                LT = (5 + 6 + (21 * count[0]) + (7 * count[0]), 99 + (21 * count[1]) + (7 * count[1]))
                 afterPaletteY = LT[1] + 28
                 pygame.draw.rect(ramka, j, pygame.Rect(LT[0], LT[1], 21, 21), 0, 4)
                 LT = (LT[0] + ramkaPos[0], LT[1] + ramkaPos[1])
@@ -213,9 +213,10 @@ class Screens:
         pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(44, afterPaletteY + 10, 21, 21), 1, 4)
         pygame.draw.rect(ramka, PROJ["Params"]["PrimaryColor"], pygame.Rect(34, afterPaletteY, 21, 21), 0, 4)
         pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(34, afterPaletteY, 21, 21), 1, 4)
-        pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, afterPaletteY + 38, 90, 1))
+        pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, afterPaletteY + 78, 90, 1))
 
         scr.blit(ramka, ramkaPos)
+        scr.blit(IMG['HEXBig'], (15, afterPaletteY + 89))
         scr.blit(IMG['EDLogoGUI'], (16, 58))
         scr.blit(IMG[f'{res[0]}'], (44, 59 + 42))
 
