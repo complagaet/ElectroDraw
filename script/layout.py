@@ -54,3 +54,9 @@ def multi_line(scr, font, f_size, color, text, x, y, al):
 
 def IN_check_2D(left_top, right_bottom, pos):
     return left_top[0] <= pos[0] < right_bottom[0] and left_top[1] <= pos[1] < right_bottom[1]
+
+
+def hex_to_rgb(value):
+    value = value.lstrip('#')
+    lv = len(value)
+    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))

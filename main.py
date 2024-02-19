@@ -237,6 +237,7 @@ pygame.display.set_caption(LANG['ED'])
 pygame.display.set_icon(pygame.image.load('content/EDIco.png'))
 clock = pygame.time.Clock()
 
+print(hex_to_rgb("#ff11ff"))
 c = 0
 k = []
 new_project_canvas_size_params = [0, 0, 0, 0, 0]
