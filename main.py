@@ -161,11 +161,11 @@ class Screens:
 
                 if IN_check_2D(ramka_LT, ramka_RB, LAST_MOUSE_POSITION):
                     pygame.draw.rect(
-                        ramka, (50, 50, 50),
+                        ramka, (0, 0, 0),
                         pygame.Rect(
                             (w / res[0] * i, h / res[1] * j),
                             (w / res[0], h / res[1])
-                        )
+                        ), 1
                     )
                     if L_MOUSE_HOLD:
                         draw[i][j] = PROJ["Params"]["PrimaryColor"]
@@ -209,10 +209,10 @@ class Screens:
             count[0] += 1
             count[1] = 0
 
-        pygame.draw.rect(ramka, PROJ["Params"]["SecondaryColor"], pygame.Rect(45, afterPaletteY + 10, 21, 21), 0, 4)
-        pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(45, afterPaletteY + 10, 21, 21), 1, 4)
-        pygame.draw.rect(ramka, PROJ["Params"]["PrimaryColor"], pygame.Rect(35, afterPaletteY, 21, 21), 0, 4)
-        pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(35, afterPaletteY, 21, 21), 1, 4)
+        pygame.draw.rect(ramka, PROJ["Params"]["SecondaryColor"], pygame.Rect(44, afterPaletteY + 10, 21, 21), 0, 4)
+        pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(44, afterPaletteY + 10, 21, 21), 1, 4)
+        pygame.draw.rect(ramka, PROJ["Params"]["PrimaryColor"], pygame.Rect(34, afterPaletteY, 21, 21), 0, 4)
+        pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(34, afterPaletteY, 21, 21), 1, 4)
         pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, afterPaletteY + 38, 90, 1))
 
         scr.blit(ramka, ramkaPos)
