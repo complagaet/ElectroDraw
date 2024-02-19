@@ -214,7 +214,7 @@ class Screens:
         pygame.draw.rect(ramka, PROJ["Params"]["PrimaryColor"], pygame.Rect(34, afterPaletteY, 21, 21), 0, 4)
         pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(34, afterPaletteY, 21, 21), 1, 4)
         pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, afterPaletteY + 38, 90, 1))
-
+#
         scr.blit(ramka, ramkaPos)
         scr.blit(IMG['EDLogoGUI'], (16, 58))
         scr.blit(IMG[f'{res[0]}'], (44, 59 + 42))
