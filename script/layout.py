@@ -59,4 +59,14 @@ def IN_check_2D(left_top, right_bottom, pos):
 def hex_to_rgb(value):
     value = value.lstrip('#')
     lv = len(value)
-    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
+    if lv != 6:
+        return False
+
+    try:
+        return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
+    except ValueError:
+        return False
+
+
+def rgb_to_hex(rgb):
+    return '%02x%02x%02x' % rgb

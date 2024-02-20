@@ -54,7 +54,10 @@ def lang():
         "Help_ESC": "ESC -> Home screen",
         "Help_ESC_Back": "ESC -> Back",
         "Help_Enter": "Enter -> Continue",
+        "Help_Use_Color": "Enter -> Use color",
+        "IncorrectColor": "Wrong color!",
         "CanvasSize": "Canvas size",
+        "HEX": "HEX color",
         "PashaAITU": "Astana IT University\nLukoyanov Pavel\nSE-2331",
         "Welcome": "Welcome! Press any key to continue..."
     }

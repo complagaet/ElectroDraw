@@ -2,19 +2,27 @@ import script.content as cont
 from script.layout import *
 import pygame
 
-
 LAST_MOUSE_POSITION = (0, 0)
 L_MOUSE_HOLD = False
 R_MOUSE_HOLD = False
 LOCATION = "START"
+LOCATION_SUB = ""
 VER = "0.0"
+PALETTE = [
+    ["000000", "FF0000", "00FFFF", "AF708B"],
+    ["FFFFFF", "FFFF00", "0000FF", "FF9A65"],
+    ["808080", "00FF00", "FF00FF", "3B7EFF"]
+]
+PALETTE = list(map(lambda x: list(map(lambda a: hex_to_rgb(a), x)), PALETTE))
+
 PROJ = {
     "Name": "",
     "CanvasSize": (8, 8),
     "Draw": [],
     "Params": {
         "PrimaryColor": (0, 0, 0),
-        "SecondaryColor": (255, 255, 255)
+        "SecondaryColor": (255, 255, 255),
+        "CanvasActive": True
     }
 }
 
@@ -154,25 +162,36 @@ class Screens:
                     )
                 )
 
-        for i in range(0, res[0]):
-            for j in range(0, res[1]):
-                ramka_LT = (ramkaPos[0] + w / res[0] * i, ramkaPos[1] + h / res[1] * j)
-                ramka_RB = (ramkaPos[0] + w / res[0] * i + w / res[0], ramkaPos[1] + h / res[1] * j + h / res[0])
+        if PROJ['Params']['CanvasActive']:
+            for i in range(0, res[0]):
+                for j in range(0, res[1]):
+                    ramka_LT = (ramkaPos[0] + w / res[0] * i, ramkaPos[1] + h / res[1] * j)
+                    ramka_RB = (ramkaPos[0] + w / res[0] * i + w / res[0], ramkaPos[1] + h / res[1] * j + h / res[0])
+                    if IN_check_2D(ramka_LT, ramka_RB, LAST_MOUSE_POSITION):
+                        pygame.draw.rect(
+                            ramka, (0, 0, 0),
+                            pygame.Rect(
+                                (w / res[0] * i, h / res[1] * j),
+                                (w / res[0], h / res[1])
+                            ), 1
+                        )
+                        if L_MOUSE_HOLD:
+                            draw[i][j] = PROJ['Params']['PrimaryColor']
+                        if R_MOUSE_HOLD:
+                            draw[i][j] = PROJ['Params']['SecondaryColor']
 
-                if IN_check_2D(ramka_LT, ramka_RB, LAST_MOUSE_POSITION):
-                    pygame.draw.rect(
-                        ramka, (0, 0, 0),
-                        pygame.Rect(
-                            (w / res[0] * i, h / res[1] * j),
-                            (w / res[0], h / res[1])
-                        ), 1
-                    )
-                    if L_MOUSE_HOLD:
-                        draw[i][j] = PROJ["Params"]["PrimaryColor"]
-                    if R_MOUSE_HOLD:
-                        draw[i][j] = PROJ["Params"]["SecondaryColor"]
+        scr.blit(FONT['Main'].render(f"{res[0]}x{res[1]} | {w}x{h}", False, CL['BLACK']),
+                 align_relatively(ramkaPos, 0, h + 2))
+        scr.blit(ramka, ramkaPos)
 
-        scr.blit(FONT['Main'].render(f"{res[0]}x{res[1]} | {w}x{h}", False, CL['BLACK']), align_relatively(ramkaPos, 0, h + 2))
+    def color_preview(self, color):
+        scr = self.scr
+        w, h = 45, 45
+
+        ramka = pygame.Surface((w, h), pygame.SRCALPHA)
+        ramkaPos = align(ramka, -120, 0, "c")
+        pygame.draw.rect(ramka, color, pygame.Rect(0, 0, w, h), 0, 15)
+        pygame.draw.rect(ramka, CL['BLACK'], pygame.Rect(0, 0, w, h), 1, 15)
         scr.blit(ramka, ramkaPos)
 
     def tools(self, res):
@@ -180,11 +199,7 @@ class Screens:
         w = 100
         h = HEIGHT - 60
 
-        colors = [
-            [(0, 0, 0), (255, 0, 0), (0, 255, 255), (255, 255, 0)],
-            [(255, 255, 255), (255, 255, 0), (0, 0, 255), (255, 154, 101)],
-            [(128, 128, 128), (0, 255, 0), (255, 0, 255), (59, 126, 255)]
-        ]
+        colors = PALETTE
 
         ramka = pygame.Surface((w, h), pygame.SRCALPHA)
         ramkaPos = align(ramka, 10, 50, "lt")
@@ -215,8 +230,16 @@ class Screens:
         pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(34, afterPaletteY, 21, 21), 1, 4)
         pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, afterPaletteY + 78, 90, 1))
 
+        HEX_LT = (15, afterPaletteY + 89)
+        if IN_check_2D(HEX_LT, (HEX_LT[0] + 90, HEX_LT[1] + 32), LAST_MOUSE_POSITION):
+            if L_MOUSE_HOLD:
+                PROJ['Params']['CanvasActive'] = False
+                global LOCATION_SUB, hex_color
+                LOCATION_SUB = "HEX"
+                hex_color = rgb_to_hex(PROJ["Params"]["PrimaryColor"])
+
         scr.blit(ramka, ramkaPos)
-        scr.blit(IMG['HEXBig'], (15, afterPaletteY + 89))
+        scr.blit(IMG['HEXBig'], HEX_LT)
         scr.blit(IMG['EDLogoGUI'], (16, 58))
         scr.blit(IMG[f'{res[0]}'], (44, 59 + 42))
 
@@ -238,10 +261,10 @@ pygame.display.set_caption(LANG['ED'])
 pygame.display.set_icon(pygame.image.load('content/EDIco.png'))
 clock = pygame.time.Clock()
 
-print(hex_to_rgb("#ff11ff"))
 c = 0
 k = []
 new_project_canvas_size_params = [0, 0, 0, 0, 0]
+hex_color = ""
 
 running = True
 while running:
@@ -319,12 +342,12 @@ while running:
         new_project_canvas_size_params = screens.menu(
             ev, LANG['CanvasSize'],
             [
-                    (IMG['8'], "8x8"),
-                    (IMG['16'], "16x16"),
-                    (IMG['32'], "32x32"),
-                    (IMG['64'], "64x64"),
-                    (IMG['128'], "128x128")
-                ],
+                (IMG['8'], "8x8"),
+                (IMG['16'], "16x16"),
+                (IMG['32'], "32x32"),
+                (IMG['64'], "64x64"),
+                (IMG['128'], "128x128")
+            ],
             new_project_canvas_size_params, False
         )
         screens.proj_header(PROJ['Name'])
@@ -348,7 +371,7 @@ while running:
 
         for event in ev:
             if event.type == pygame.KEYDOWN:
-                if event.key == 27:
+                if event.key == 27 and LOCATION_SUB == "":
                     LOCATION = "NEWPROJECT_2"
 
         screens.proj_header(PROJ['Name'])
@@ -378,6 +401,36 @@ while running:
             ), (5, 5)
         )
         screens.help([(IMG['Back'], LANG['Help_ESC'])])
+
+    # ----------------------
+
+    if LOCATION_SUB == "HEX":
+        screens.alert(IMG['HEXIco'], LANG['HEX'], f"#{hex_color.upper()}_", "WHITE")
+
+        if hex_to_rgb(hex_color):
+            screens.help([(IMG['Next'], LANG['Help_Use_Color']), (IMG['Back'], LANG['Help_ESC_Back'])])
+            screens.color_preview(hex_to_rgb(hex_color))
+        else:
+            screens.help([(IMG['Next'], LANG['IncorrectColor']), (IMG['Back'], LANG['Help_ESC_Back'])])
+
+        for event in ev:
+            if event.type == pygame.TEXTINPUT:
+                if len(hex_color) < 6:
+                    hex_color += f"{event.text.upper()}"
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == 27:
+                    LOCATION_SUB = ""
+                    PROJ['Params']['CanvasActive'] = True
+
+                if event.key == 8:
+                    hex_color = hex_color[:-1]
+
+                if event.key == 13:
+                    if hex_to_rgb(hex_color):
+                        LOCATION_SUB = ""
+                        PROJ['Params']['PrimaryColor'] = hex_to_rgb(hex_color)
+                        PROJ['Params']['CanvasActive'] = True
 
     pygame.display.flip()
 
