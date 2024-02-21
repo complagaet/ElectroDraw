@@ -17,7 +17,7 @@ PALETTE = list(map(lambda x: list(map(lambda a: hex_to_rgb(a), x)), PALETTE))
 
 PROJ = {
     "Name": "",
-    "CanvasSize": (8, 8),
+    "CanvasSize": (0, 0),
     "Draw": [],
     "Params": {
         "PrimaryColor": (0, 0, 0),
