@@ -177,6 +177,7 @@ class Screens:
                             draw[i][j] = PROJ['Params']['PrimaryColor']
                         if R_MOUSE_HOLD:
                             draw[i][j] = PROJ['Params']['SecondaryColor']
+                        print(draw)
 
         scr.blit(FONT['Main'].render(f"{res[0]}x{res[1]} | {w}x{h}", False, CL['BLACK']),
                  align_relatively(ramkaPos, 0, h + 2))
