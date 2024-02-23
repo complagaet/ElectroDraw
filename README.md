@@ -3,6 +3,7 @@
 
 A simple editor created as part of a study assignment, made with love!
 ![App Screenshot](https://i.imgur.com/NOWhkem.png)
+![App Screenshot](https://i.imgur.com/57KC4x1.png)
 
 ## Launch
 
