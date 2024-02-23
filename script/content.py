@@ -25,6 +25,8 @@ def getIMG():
         "Back": pygame.image.load('content/Back.png'),
         "Reset": pygame.image.load('content/Reset.png'),
         "Next": pygame.image.load('content/Next.png'),
+        "Return": pygame.image.load('content/Return.png'),
+        "Home": pygame.image.load('content/Home.png'),
         "Entry": pygame.image.load('content/Entry.png'),
         "EntryFocused": pygame.image.load('content/EntryFocused.png'),
         "AITU": pygame.image.load('content/AITU.png'),
