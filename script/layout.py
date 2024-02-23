@@ -26,6 +26,10 @@ def align(surf, x, y, corner):
         ret[0] = WIDTH - surf.get_width() - x
         ret[1] = HEIGHT - surf.get_height() - y
 
+    if corner == "rt":  # Right-Top
+        ret[0] = WIDTH - surf.get_width() - x
+        ret[1] = y
+
     if corner == "lc":  # Left-Bottom
         ret[0] = x
         ret[1] = HEIGHT - (surf.get_height() / 2) - (HEIGHT / 2) - y

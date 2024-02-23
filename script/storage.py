@@ -1,7 +1,13 @@
 from PIL import Image  # pip install pillow
+import tkinter
+from tkinter import filedialog
 
 
-def save_PNG(draw, res, path, scaling):
+root = tkinter.Tk()
+root.withdraw()
+
+
+def export_png(draw, res, path, scaling):
     to_export = []
     for i in range(0, len(draw[0])):
         for _ in range(0, scaling):
@@ -13,9 +19,12 @@ def save_PNG(draw, res, path, scaling):
     im.save(path)
 
 
-save_PNG(
-    [[(0, 0, 0), (0, 255, 0), (0, 0, 0), (0, 255, 255), (0, 0, 0), (255, 0, 255), (0, 0, 0), (255, 154, 101)], [(255, 0, 0), (0, 0, 0), (255, 255, 0), (0, 0, 0), (59, 126, 255), (0, 0, 0), (175, 112, 139), (0, 0, 0)], [(0, 0, 0), (0, 255, 0), (0, 0, 0), (0, 255, 255), (0, 0, 0), (255, 0, 255), (0, 0, 0), (255, 154, 101)], [(255, 0, 0), (0, 0, 0), (255, 255, 0), (0, 0, 0), (59, 126, 255), (0, 0, 0), (175, 112, 139), (0, 0, 0)], [(0, 0, 0), (0, 255, 0), (0, 0, 0), (0, 255, 255), (0, 0, 0), (255, 0, 255), (0, 0, 0), (255, 154, 101)], [(255, 0, 0), (0, 0, 0), (255, 255, 0), (0, 0, 0), (59, 126, 255), (0, 0, 0), (175, 112, 139), (0, 0, 0)], [(0, 0, 0), (0, 255, 0), (0, 0, 0), (0, 255, 255), (0, 0, 0), (255, 0, 255), (0, 0, 0), (255, 154, 101)], [(255, 0, 0), (0, 0, 0), (255, 255, 0), (0, 0, 0), (59, 126, 255), (0, 0, 0), (175, 112, 139), (0, 0, 0)]],
-    (8, 8),
-    'path.png',
-    100
-)
+def save_as(name):
+    directory = filedialog.asksaveasfilename(initialfile=name)
+    return directory
+
+
+def user_save_png(cont):
+    path = save_as(f"{cont['Name']}.png")
+    if path:
+        export_png(cont['Draw'], cont['CanvasSize'], path, 100)
