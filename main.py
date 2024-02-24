@@ -2,10 +2,13 @@ import script.content as cont
 from script.layout import *
 from script.storage import *
 import pygame
+import copy
+import platform
 
 LAST_MOUSE_POSITION = (0, 0)
 L_MOUSE_HOLD = False
 R_MOUSE_HOLD = False
+CTRL_HOLD = False
 LOCATION = "START"
 LOCATION_SUB = ""
 VER = "0.0"
@@ -21,14 +24,17 @@ PROJ = {
     "Params": {
         "PrimaryColor": (0, 0, 0),
         "SecondaryColor": (255, 255, 255),
-        "CanvasActive": True
+        "CanvasActive": True,
+        "History": []
     }
 }
+CTRL_Z_COUNT = 50
 
 
 class Screens:
     def __init__(self, scr):
         self.scr = scr
+        self.DRAW_CHANGED = False
 
     def loadscreen(self):
         scr = self.scr
@@ -137,6 +143,7 @@ class Screens:
                 st = draw[i]
                 for j in range(0, res[1]):
                     st.append((255, 255, 255))
+            CTRL_Z("SAVE")
 
         ramka = pygame.Surface((w, h), pygame.SRCALPHA)
         if WIDTH < w + 120 * 2 or HEIGHT < h + 50 * 2:
@@ -171,8 +178,10 @@ class Screens:
                         )
                         if L_MOUSE_HOLD:
                             draw[i][j] = PROJ['Params']['PrimaryColor']
+                            self.DRAW_CHANGED = True
                         if R_MOUSE_HOLD:
                             draw[i][j] = PROJ['Params']['SecondaryColor']
+                            self.DRAW_CHANGED = True
 
         scr.blit(FONT['Main'].render(f"{res[0]}x{res[1]} | {w}x{h}", False, CL['BLACK']),
                  align_relatively(ramkaPos, 0, h + 2))
@@ -254,6 +263,18 @@ class Screens:
                 LOCATION_SUB = "PROJ_MENU"
 
 
+def CTRL_Z(action):
+    history = PROJ['Params']['History']
+    if action == "SAVE":
+        history.append(copy.deepcopy(PROJ['Draw']))
+        if len(history) > CTRL_Z_COUNT:
+            history.pop(0)
+    elif action == "BACK":
+        if len(history) > 1:
+            PROJ['Draw'] = copy.deepcopy(history[len(history) - 2])
+            history.pop(len(history) - 1)
+
+
 pygame.init()
 pygame.mixer.init()
 
@@ -307,8 +328,18 @@ while running:
                 R_MOUSE_HOLD = False
 
         if event.type == pygame.KEYDOWN:
-            if event.key == 1073742051:
-                print("ctr;")
+            if (
+                ((event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL) and platform.system() != "Darwin")
+                or (event.key == 1073742051 or event.key == 1073742055)
+            ):
+                CTRL_HOLD = True
+
+        if event.type == pygame.KEYUP:
+            if (
+                ((event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL) and platform.system() != "Darwin")
+                or (event.key == 1073742051 or event.key == 1073742055)
+            ):
+                CTRL_HOLD = False
 
     if LOCATION == "START":
         pygame.display.set_caption(LANG['ED'])
@@ -385,6 +416,7 @@ while running:
             PROJ['CanvasSize'] = sizes[new_project_canvas_size_params.index(1)]
             new_project_canvas_size_params = list(map(lambda a: 0, new_project_canvas_size_params))
             PROJ['Draw'] = []
+            PROJ['Params']['History'] = []
             c = 0
             LOCATION = "DRAW"
 
@@ -402,8 +434,14 @@ while running:
                     sub_opened = False
                     LOCATION_SUB = "PROJ_MENU"
 
+                if event.scancode == 29 and CTRL_HOLD:
+                    CTRL_Z('BACK')
+
         if c == 20:
             screens.canvas(ev, PROJ['CanvasSize'], PROJ['Draw'])
+            if screens.DRAW_CHANGED and not (L_MOUSE_HOLD or R_MOUSE_HOLD):
+                CTRL_Z('SAVE')
+                screens.DRAW_CHANGED = False
         else:
             c += 1
             screens.alert(IMG['EDIcoGUI'], LANG['ED'], f"{LANG['Wait']}", "BGFocus")
@@ -451,7 +489,8 @@ while running:
 
     if len(ev) != 0:
         k = ev
-    multi_line(screen, FONT["Main"], 16, CL['BLUE'], f"{LOCATION}\nver. {VER}, {WIDTH}x{HEIGHT}\n{ev}\n{k}", 10, 10, "lt")
+    multi_line(screen, FONT["Main"], 16, CL['BLUE'],
+               f"{LOCATION}\n{CTRL_HOLD}\nver. {VER}, {WIDTH}x{HEIGHT}\n{ev}\n{k}", 10, 10, "lt")
 
     # ----------------------
 
