@@ -306,6 +306,10 @@ while running:
             elif event.button == 3:
                 R_MOUSE_HOLD = False
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == 1073742051:
+                print("ctr;")
+
     if LOCATION == "START":
         pygame.display.set_caption(LANG['ED'])
         screens.loadscreen()
@@ -426,7 +430,6 @@ while running:
 
         if keys[1]:
             LOCATION = "START"
-
     else:
         pygame.display.set_caption(f"{LANG['ED']} | {LANG['Error']}")
         text = FONT["Main"].render(LANG['Error'], False, CL['BLACK'])
@@ -445,6 +448,10 @@ while running:
             ), (5, 5)
         )
         screens.help([(IMG['Back'], LANG['Help_ESC'])])
+
+    if len(ev) != 0:
+        k = ev
+    multi_line(screen, FONT["Main"], 16, CL['BLUE'], f"{LOCATION}\nver. {VER}, {WIDTH}x{HEIGHT}\n{ev}\n{k}", 10, 10, "lt")
 
     # ----------------------
 
