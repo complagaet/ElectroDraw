@@ -5,7 +5,7 @@ import pygame
 import copy
 import platform
 
-DEBUG = True
+DEBUG = False
 LAST_MOUSE_POSITION = (0, 0)
 L_MOUSE_HOLD = False
 R_MOUSE_HOLD = False
