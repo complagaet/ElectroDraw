@@ -5,6 +5,7 @@ import pygame
 import copy
 import platform
 
+DEBUG = True
 LAST_MOUSE_POSITION = (0, 0)
 L_MOUSE_HOLD = False
 R_MOUSE_HOLD = False
@@ -468,29 +469,12 @@ while running:
 
         if keys[1]:
             LOCATION = "START"
-    else:
-        pygame.display.set_caption(f"{LANG['ED']} | {LANG['Error']}")
-        text = FONT["Main"].render(LANG['Error'], False, CL['BLACK'])
-        screen.blit(text, align(text, 0, 0, "c"))
 
-        for event in ev:
-            if event.type == pygame.KEYDOWN:
-                if event.key == 27:
-                    LOCATION = "START"
-
+    if DEBUG:
         if len(ev) != 0:
             k = ev
-        screen.blit(
-            FONT["Main"].render(
-                f"{LOCATION}\nver. {VER}, {WIDTH}x{HEIGHT}\n{PROJ}\n{k}", False, CL['BLUE']
-            ), (5, 5)
-        )
-        screens.help([(IMG['Back'], LANG['Help_ESC'])])
-
-    if len(ev) != 0:
-        k = ev
-    multi_line(screen, FONT["Main"], 16, CL['BLUE'],
-               f"{LOCATION}\n{CTRL_HOLD}\nver. {VER}, {WIDTH}x{HEIGHT}\n{ev}\n{k}", 10, 10, "lt")
+        multi_line(screen, FONT["Main"], 16, CL['BLUE'],
+                   f"{LOCATION}\n{CTRL_HOLD}\nver. {VER}, {WIDTH}x{HEIGHT}\n{ev}\n{k}", 10, 10, "lt")
 
     # ----------------------
 
