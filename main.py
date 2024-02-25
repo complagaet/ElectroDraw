@@ -369,7 +369,7 @@ clock = pygame.time.Clock()
 
 c = 0
 sub_opened = False
-new_project_canvas_size_params = [0, 0, 0, 0, 0]
+new_project_canvas_size_params = [0, 0, 0, 0, 0, 0]
 hex_color = ""
 
 running = True
@@ -479,14 +479,15 @@ while running:
                 (IMG['16'], "16x16"),
                 (IMG['32'], "32x32"),
                 (IMG['64'], "64x64"),
-                (IMG['128'], "128x128")
+                (IMG['128'], "128x128"),
+                (IMG['256'], "256x256")
             ],
             new_project_canvas_size_params, False
         )
         screens.proj_header(PROJ['Name'])
         screens.help([(IMG['Back'], LANG['Help_ESC_Back'])])
 
-        sizes = [(8, 8), (16, 16), (32, 32), (64, 64), (128, 128)]
+        sizes = [(8, 8), (16, 16), (32, 32), (64, 64), (128, 128), (256, 256)]
         if 1 in new_project_canvas_size_params:
             PROJ['CanvasSize'] = sizes[new_project_canvas_size_params.index(1)]
             new_project_canvas_size_params = list(map(lambda a: 0, new_project_canvas_size_params))
@@ -608,7 +609,7 @@ while running:
             screens.proj_header(PROJ['Name'])
             screens.alert(IMG['EDIcoGUI'], LANG['ED'], f"{LANG['Wait']}", "BGFocus")
             pygame.display.flip()
-            user_save_png(PROJ)
+            user_save_png(PROJ, 100)
 
         elif keys[1]:
             LOCATION_SUB = ""

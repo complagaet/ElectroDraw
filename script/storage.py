@@ -24,7 +24,7 @@ def save_as(name):
     return directory
 
 
-def user_save_png(cont):
+def user_save_png(cont, scaling):
     path = save_as(f"{cont['Name']}.png")
     if path:
-        export_png(cont['Draw'], cont['CanvasSize'], path, 100)
+        export_png(cont['Draw'], cont['CanvasSize'], path, scaling)
