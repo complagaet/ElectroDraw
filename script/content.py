@@ -39,6 +39,11 @@ def getIMG():
         "HEXBig": pygame.image.load('content/HEXBig.png'),
         "HEXIco": pygame.image.load('content/HEXIco.png'),
         "PNG": pygame.image.load('content/PNG.png'),
+        "Forward": pygame.image.load('content/Forward.png'),
+        "ForwardFocused": pygame.image.load('content/ForwardFocused.png'),
+        "Backward": pygame.image.load('content/Backward.png'),
+        "BackwardFocused": pygame.image.load('content/BackwardFocused.png'),
+        "Swap": pygame.image.load('content/Swap.png')
     }
 
 

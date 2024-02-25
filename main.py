@@ -30,6 +30,7 @@ PROJ = {
     }
 }
 CTRL_Z_COUNT = 50
+CTRL_Z_POS = 0
 
 
 class Screens:
@@ -197,6 +198,7 @@ class Screens:
 
                         if L_MOUSE_HOLD or R_MOUSE_HOLD:
                             draw_line(PROJ['Draw'], self.LAST_DRAW_MOUSE_CORD, DRAW_MOUSE_CORD, COLOR)
+                            PROJ['Draw'][i][j] = COLOR
                             self.LAST_DRAW_MOUSE_CORD = DRAW_MOUSE_CORD
                             self.DRAW_CHANGED = True
 
@@ -222,22 +224,45 @@ class Screens:
         scr.blit(ramka, ramkaPos)
 
     def tools(self, res):
+        global L_MOUSE_HOLD
         scr = self.scr
         w, h = 100, HEIGHT - 60
-
-        colors = PALETTE
 
         ramka = pygame.Surface((w, h), pygame.SRCALPHA)
         ramkaPos = align(ramka, 10, 50, "lt")
         pygame.draw.rect(ramka, CL['Tools'], pygame.Rect(0, 0, w, h), 0, 4)
 
+        BACKWARD_LT, FORWARD_LT, BF_SIZE = (15, 16), (43, 16), (21, 19)
+        if CTRL_Z_POS != 0:
+            scr.blit(IMG['BackwardFocused'], BACKWARD_LT)
+            if (
+                    IN_check_2D(BACKWARD_LT,
+                                (BACKWARD_LT[0] + BF_SIZE[0], BACKWARD_LT[1] + BF_SIZE[1]),
+                                LAST_MOUSE_POSITION) and L_MOUSE_HOLD
+            ):
+                CTRL_Z('BACK')
+                L_MOUSE_HOLD = False
+        else:
+            scr.blit(IMG['Backward'], BACKWARD_LT)
+        if CTRL_Z_POS != len(PROJ['Params']['History']) - 1 and len(PROJ['Params']['History']) != 0:
+            scr.blit(IMG['ForwardFocused'], FORWARD_LT)
+            if (
+                    IN_check_2D(FORWARD_LT,
+                                (FORWARD_LT[0] + BF_SIZE[0], FORWARD_LT[1] + BF_SIZE[1]),
+                                LAST_MOUSE_POSITION) and L_MOUSE_HOLD
+            ):
+                CTRL_Z('FORWARD')
+                L_MOUSE_HOLD = False
+        else:
+            scr.blit(IMG['Forward'], FORWARD_LT)
+
         pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, 43, 90, 1))
         pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, 90, 90, 1))
 
         count, afterPaletteY = [0, 0], 0
-        for i in colors:
+        for i in PALETTE:
             for j in i:
-                LT = (5 + 6 + (21 * count[0]) + (7 * count[0]), 99 + (21 * count[1]) + (7 * count[1]))
+                LT = (11 + (21 * count[0]) + (7 * count[0]), 99 + (21 * count[1]) + (7 * count[1]))
                 afterPaletteY = LT[1] + 28
                 pygame.draw.rect(ramka, j, pygame.Rect(LT[0], LT[1], 21, 21), 0, 4)
                 LT = (LT[0] + ramkaPos[0], LT[1] + ramkaPos[1])
@@ -249,14 +274,24 @@ class Screens:
                 count[1] += 1
             count[0] += 1
             count[1] = 0
-
         pygame.draw.rect(ramka, PROJ["Params"]["SecondaryColor"], pygame.Rect(44, afterPaletteY + 10, 21, 21), 0, 4)
         pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(44, afterPaletteY + 10, 21, 21), 1, 4)
         pygame.draw.rect(ramka, PROJ["Params"]["PrimaryColor"], pygame.Rect(34, afterPaletteY, 21, 21), 0, 4)
         pygame.draw.rect(ramka, CL['WHITE'], pygame.Rect(34, afterPaletteY, 21, 21), 1, 4)
-        pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, afterPaletteY + 78, 90, 1))
+        pygame.draw.rect(ramka, CL['GRAY'], pygame.Rect(5, afterPaletteY + 38, 90, 1))
+        SWAP_LT = (ramkaPos[0] + 72, ramkaPos[1] + afterPaletteY + 6)
+        SWAP_CLICK_ZONE_LT = (ramkaPos[0] + 34, ramkaPos[1] + afterPaletteY)
+        if (
+                IN_check_2D(SWAP_CLICK_ZONE_LT,
+                            (SWAP_CLICK_ZONE_LT[0] + 60, SWAP_CLICK_ZONE_LT[1] + 35),
+                            LAST_MOUSE_POSITION) and L_MOUSE_HOLD
+        ):
+            sw = PROJ["Params"]["PrimaryColor"]
+            PROJ["Params"]["PrimaryColor"] = PROJ["Params"]["SecondaryColor"]
+            PROJ["Params"]["SecondaryColor"] = sw
+            L_MOUSE_HOLD = False
 
-        HEX_LT = (15, afterPaletteY + 89)
+        HEX_LT = (15, afterPaletteY + 96)
         if IN_check_2D(HEX_LT, (HEX_LT[0] + 90, HEX_LT[1] + 32), LAST_MOUSE_POSITION):
             if L_MOUSE_HOLD:
                 PROJ['Params']['CanvasActive'] = False
@@ -264,7 +299,10 @@ class Screens:
                 LOCATION_SUB = "HEX"
                 hex_color = rgb_to_hex(PROJ["Params"]["PrimaryColor"])
 
+        afterPaletteY += 96 + 32
+
         scr.blit(ramka, ramkaPos)
+        scr.blit(IMG['Swap'], SWAP_LT)
         scr.blit(IMG['HEXBig'], HEX_LT)
         scr.blit(IMG['EDLogoGUI'], (16, 58))
         scr.blit(IMG[f'{res[0]}'], (44, 59 + 42))
@@ -285,9 +323,6 @@ class Screens:
             if L_MOUSE_HOLD:
                 global LOCATION_SUB
                 LOCATION_SUB = "PROJ_MENU"
-
-
-CTRL_Z_POS = 0
 
 
 def CTRL_Z(action):
@@ -313,6 +348,7 @@ def CTRL_Z(action):
         if CTRL_Z_POS != len(history) - 1:
             PROJ['Draw'] = copy.deepcopy(history[CTRL_Z_POS + 1])
             CTRL_Z_POS += 1
+
 
 pygame.init()
 pygame.mixer.init()
@@ -410,7 +446,7 @@ while running:
         screens.alert(IMG['EDIcoGUI'], LANG['ED'], f"{LANG['Wait']} {c}", "BGFocus")
         c += 1
 
-        if c >= FPS:
+        if c >= 20:
             LOCATION = "NEWPROJECT"
             c = 0
 
@@ -506,7 +542,7 @@ while running:
 
         if keys[0]:
             LOCATION = "DRAW"
-            c = 0
+            L_MOUSE_HOLD = False
 
         if keys[1]:
             LOCATION = "START"
@@ -578,7 +614,7 @@ while running:
             LOCATION_SUB = ""
             sub_opened = False
             PROJ['Params']['CanvasActive'] = True
-            c = 0
+            L_MOUSE_HOLD = False
 
         elif keys[2]:
             LOCATION_SUB = ""

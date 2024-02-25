@@ -95,4 +95,4 @@ def draw_line(matrix, start, end, color):
         if e2 < dx:
             err += dx
             y1 += sy
-    matrix[y1][x1] = color
+    #  matrix[y1][x1] = color
