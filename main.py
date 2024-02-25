@@ -36,6 +36,8 @@ class Screens:
     def __init__(self, scr):
         self.scr = scr
         self.DRAW_CHANGED = False
+        self.LAST_DRAW_MOUSE_CORD = (0, 0)
+        self.IN_CANVAS = False
 
     def loadscreen(self):
         scr = self.scr
@@ -164,12 +166,21 @@ class Screens:
                     )
                 )
 
+        global L_MOUSE_HOLD, R_MOUSE_HOLD
+        br = False
         if PROJ['Params']['CanvasActive']:
             for i in range(0, res[0]):
                 for j in range(0, res[1]):
                     ramka_LT = (ramkaPos[0] + w / res[0] * i, ramkaPos[1] + h / res[1] * j)
                     ramka_RB = (ramkaPos[0] + w / res[0] * i + w / res[0], ramkaPos[1] + h / res[1] * j + h / res[0])
                     if IN_check_2D(ramka_LT, ramka_RB, LAST_MOUSE_POSITION):
+                        if (not self.IN_CANVAS) and self.DRAW_CHANGED:
+                            self.LAST_DRAW_MOUSE_CORD = (i, j)
+
+                        self.IN_CANVAS = True
+                        DRAW_MOUSE_CORD = (i, j)
+                        if not (L_MOUSE_HOLD or R_MOUSE_HOLD):
+                            self.LAST_DRAW_MOUSE_CORD = (i, j)
                         pygame.draw.rect(
                             ramka, (0, 0, 0),
                             pygame.Rect(
@@ -177,15 +188,27 @@ class Screens:
                                 (w / res[0], h / res[1])
                             ), 1
                         )
+
+                        COLOR = ()
                         if L_MOUSE_HOLD:
-                            draw[i][j] = PROJ['Params']['PrimaryColor']
-                            self.DRAW_CHANGED = True
-                        if R_MOUSE_HOLD:
-                            draw[i][j] = PROJ['Params']['SecondaryColor']
+                            COLOR = PROJ['Params']['PrimaryColor']
+                        elif R_MOUSE_HOLD:
+                            COLOR = PROJ['Params']['SecondaryColor']
+
+                        if L_MOUSE_HOLD or R_MOUSE_HOLD:
+                            draw_line(PROJ['Draw'], self.LAST_DRAW_MOUSE_CORD, DRAW_MOUSE_CORD, COLOR)
+                            self.LAST_DRAW_MOUSE_CORD = DRAW_MOUSE_CORD
                             self.DRAW_CHANGED = True
 
-        scr.blit(FONT['Main'].render(f"{res[0]}x{res[1]} | {w}x{h}", False, CL['BLACK']),
-                 align_relatively(ramkaPos, 0, h + 2))
+                        br = True
+
+        if not br:
+            self.IN_CANVAS = False
+
+        scr.blit(
+            FONT['Main'].render(f"{res[0]}x{res[1]} | {w}x{h}", False, CL['BLACK']),
+            align_relatively(ramkaPos, 0, h + 2)
+        )
         scr.blit(ramka, ramkaPos)
 
     def color_preview(self, color):
@@ -264,17 +287,32 @@ class Screens:
                 LOCATION_SUB = "PROJ_MENU"
 
 
+CTRL_Z_POS = 0
+
+
 def CTRL_Z(action):
+    global CTRL_Z_POS
     history = PROJ['Params']['History']
     if action == "SAVE":
+        if CTRL_Z_POS != len(history) - 1:
+            for i in range(CTRL_Z_POS, len(history) - 1):
+                history.pop()
+
         history.append(copy.deepcopy(PROJ['Draw']))
+        CTRL_Z_POS = len(history) - 1
+
         if len(history) > CTRL_Z_COUNT:
             history.pop(0)
-    elif action == "BACK":
-        if len(history) > 1:
-            PROJ['Draw'] = copy.deepcopy(history[len(history) - 2])
-            history.pop(len(history) - 1)
 
+    elif action == "BACK":
+        if CTRL_Z_POS > 0:
+            PROJ['Draw'] = copy.deepcopy(history[CTRL_Z_POS - 1])
+            CTRL_Z_POS -= 1
+
+    elif action == "FORWARD":
+        if CTRL_Z_POS != len(history) - 1:
+            PROJ['Draw'] = copy.deepcopy(history[CTRL_Z_POS + 1])
+            CTRL_Z_POS += 1
 
 pygame.init()
 pygame.mixer.init()
@@ -330,15 +368,15 @@ while running:
 
         if event.type == pygame.KEYDOWN:
             if (
-                ((event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL) and platform.system() != "Darwin")
-                or (event.key == 1073742051 or event.key == 1073742055)
+                    ((event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL) and platform.system() != "Darwin")
+                    or (event.key == 1073742051 or event.key == 1073742055)
             ):
                 CTRL_HOLD = True
 
         if event.type == pygame.KEYUP:
             if (
-                ((event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL) and platform.system() != "Darwin")
-                or (event.key == 1073742051 or event.key == 1073742055)
+                    ((event.key == pygame.K_LCTRL or event.key == pygame.K_RCTRL) and platform.system() != "Darwin")
+                    or (event.key == 1073742051 or event.key == 1073742055)
             ):
                 CTRL_HOLD = False
 
@@ -437,6 +475,9 @@ while running:
 
                 if event.scancode == 29 and CTRL_HOLD:
                     CTRL_Z('BACK')
+
+                if event.scancode == 28 and CTRL_HOLD:
+                    CTRL_Z('FORWARD')
 
         if c == 20:
             screens.canvas(ev, PROJ['CanvasSize'], PROJ['Draw'])
