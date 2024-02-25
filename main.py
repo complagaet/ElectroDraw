@@ -14,9 +14,9 @@ LOCATION = "START"
 LOCATION_SUB = ""
 VER = "0.0"
 PALETTE = list(map(lambda x: list(map(lambda a: hex_to_rgb(a), x)), [
-    ["000000", "FF0000", "00FFFF", "FF69B4", "800080", "AF708B"],
-    ["FFFFFF", "FFFF00", "0000FF", "6A5ACD", "008000", "FFA07A"],
-    ["808080", "00FF00", "FF00FF", "3B7EFF", "FFD700", "FFA500"]
+    ["000000", "800080", "FF0000", "FF1493", "AF708B", "F0D9E8", "FF69B4", "00FFFF"],
+    ["FFFFFF", "FFFF00", "0000FF", "FFA500", "008000", "87CEEB", "FFFACD", "FFA07A"],
+    ["808080", "00FF00", "FF00FF", "3B7EFF", "FFD700", "20B2AA", "6A5ACD", "E0FFFF"]
 ]))
 PROJ = {
     "Name": "",
