@@ -480,7 +480,7 @@ while running:
                 (IMG['32'], "32x32"),
                 (IMG['64'], "64x64"),
                 (IMG['128'], "128x128"),
-                (IMG['256'], "256x256")
+                (IMG['256'], "256x256 (Laggy!)")
             ],
             new_project_canvas_size_params, False
         )
