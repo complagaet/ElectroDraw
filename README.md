@@ -2,7 +2,7 @@
 # ElectroDraw
 
 A simple editor created as part of a study assignment, made with love!
-![App Screenshot](https://i.imgur.com/NOWhkem.png)
+![App Screenshot](https://i.imgur.com/zDn7woF.png)
 ![App Screenshot](https://i.imgur.com/57KC4x1.png)
 
 ## Launch
@@ -15,6 +15,6 @@ pip3 install pillow
 ```
 After installing these modules, you can launch ElectroDraw via main.py.
 ```bash
-python3 main.py
+python main.py
 ```
     
