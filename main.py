@@ -1,5 +1,5 @@
 import script.content as cont
-from script.layout import *
+from script.tools import *
 from script.storage import *
 import pygame
 import copy
@@ -93,6 +93,7 @@ class Screens:
             count += 1
 
     def menu(self, ev, header, lst, focused, multiple):
+        global L_MOUSE_HOLD
         scr = self.scr
         w, h = 240, 20 + (32 * len(lst)) + 16 + (8 * (len(lst) - 1))
 
@@ -118,14 +119,14 @@ class Screens:
             if IN_check_2D(entry_pos, entry_pos_corner, mouse):
                 scr.blit(IMG['EntryFocused'], entry_pos)
 
-            for event1 in ev:
-                if event1.type == pygame.MOUSEBUTTONDOWN:
-                    if IN_check_2D(entry_pos, entry_pos_corner, mouse):
-                        if multiple:
-                            focused[count] = not focused[count]
-                        else:
-                            focused = list(map(lambda a: 0, focused))
-                            focused[count] = 1
+            if IN_check_2D(entry_pos, entry_pos_corner, mouse) and L_MOUSE_HOLD:
+                if multiple:
+                    focused[count] = not focused[count]
+                else:
+                    focused = list(map(lambda a: 0, focused))
+                    focused[count] = 1
+                SOUND['Click'].play()
+                L_MOUSE_HOLD = False
 
             scr.blit(g[0], align_relatively(ramkaPos, 32, 28 + (32 * count) + (8 * count)))
             scr.blit(
@@ -224,7 +225,7 @@ class Screens:
         scr.blit(ramka, ramkaPos)
 
     def tools(self, res):
-        global L_MOUSE_HOLD
+        global L_MOUSE_HOLD, R_MOUSE_HOLD
         scr = self.scr
         w, h = 100, HEIGHT - 60
 
@@ -241,6 +242,7 @@ class Screens:
                                 LAST_MOUSE_POSITION) and L_MOUSE_HOLD
             ):
                 CTRL_Z('BACK')
+                SOUND['Click'].play()
                 L_MOUSE_HOLD = False
         else:
             scr.blit(IMG['Backward'], BACKWARD_LT)
@@ -252,6 +254,7 @@ class Screens:
                                 LAST_MOUSE_POSITION) and L_MOUSE_HOLD
             ):
                 CTRL_Z('FORWARD')
+                SOUND['Click'].play()
                 L_MOUSE_HOLD = False
         else:
             scr.blit(IMG['Forward'], FORWARD_LT)
@@ -269,8 +272,12 @@ class Screens:
                 if IN_check_2D(LT, (LT[0] + 21, LT[1] + 21), LAST_MOUSE_POSITION):
                     if L_MOUSE_HOLD:
                         PROJ["Params"]["PrimaryColor"] = j
+                        SOUND['Click'].play()
+                        L_MOUSE_HOLD = False
                     if R_MOUSE_HOLD:
                         PROJ["Params"]["SecondaryColor"] = j
+                        SOUND['Click'].play()
+                        R_MOUSE_HOLD = False
                 count[1] += 1
             count[0] += 1
             count[1] = 0
@@ -286,9 +293,8 @@ class Screens:
                             (SWAP_CLICK_ZONE_LT[0] + 60, SWAP_CLICK_ZONE_LT[1] + 35),
                             LAST_MOUSE_POSITION) and L_MOUSE_HOLD
         ):
-            sw = PROJ["Params"]["PrimaryColor"]
-            PROJ["Params"]["PrimaryColor"] = PROJ["Params"]["SecondaryColor"]
-            PROJ["Params"]["SecondaryColor"] = sw
+            color_swap(PROJ)
+            SOUND['Click'].play()
             L_MOUSE_HOLD = False
 
         HEX_LT = (15, afterPaletteY + 96)
@@ -298,6 +304,8 @@ class Screens:
                 global LOCATION_SUB, hex_color
                 LOCATION_SUB = "HEX"
                 hex_color = rgb_to_hex(PROJ["Params"]["PrimaryColor"])
+                SOUND['Click'].play()
+                L_MOUSE_HOLD = False
 
         afterPaletteY += 96 + 32
 
@@ -319,10 +327,12 @@ class Screens:
         t = FONT['Main'].render(name, False, CL['WHITE'])
         scr.blit(t, (ramkaPos[0] + w / 2 - t.get_width() / 2, ramkaPos[1] + h / 2 - t.get_height() / 2))
 
+        global LOCATION_SUB, L_MOUSE_HOLD
         if IN_check_2D(ramkaPos, (ramkaPos[0] + w, ramkaPos[1] + h), LAST_MOUSE_POSITION):
             if L_MOUSE_HOLD:
-                global LOCATION_SUB
                 LOCATION_SUB = "PROJ_MENU"
+                SOUND['Click'].play()
+                L_MOUSE_HOLD = False
 
 
 def CTRL_Z(action):
@@ -349,8 +359,6 @@ def CTRL_Z(action):
             PROJ['Draw'] = copy.deepcopy(history[CTRL_Z_POS + 1])
             CTRL_Z_POS += 1
 
-    print(CTRL_Z_POS, len(history))
-
 
 pygame.init()
 pygame.mixer.init()
@@ -359,6 +367,7 @@ WIDTH, HEIGHT, FPS = 980, 780, 60
 LAYOUT_HW_UPDATE(HEIGHT, WIDTH)
 CL = cont.getCL()
 IMG = cont.getIMG()
+SOUND = cont.getSOUND()
 FONT = cont.getFONT()
 LANG = cont.lang()
 
@@ -518,6 +527,9 @@ while running:
                 if event.scancode == 28 and CTRL_HOLD:
                     CTRL_Z('FORWARD')
 
+                if event.scancode == 22:
+                    color_swap(PROJ)
+
         if c == 20:
             screens.canvas(ev, PROJ['CanvasSize'], PROJ['Draw'])
             if screens.DRAW_CHANGED and not (L_MOUSE_HOLD or R_MOUSE_HOLD):
@@ -623,6 +635,7 @@ while running:
             LOCATION_SUB = ""
             PROJ['Params']['CanvasActive'] = True
             LOCATION = "EXIT_DRAW"
+            SOUND['Error'].play()
 
     pygame.display.flip()
 

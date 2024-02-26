@@ -48,6 +48,13 @@ def getIMG():
     }
 
 
+def getSOUND():
+    return {
+        "Click": pygame.mixer.Sound('content/mixkit-click.wav'),
+        "Error": pygame.mixer.Sound('content/mixkit-error.wav')
+    }
+
+
 def getFONT():
     return {
         "Main": pygame.font.Font('content/PixCyrillic.ttf', 16)

@@ -96,3 +96,9 @@ def draw_line(matrix, start, end, color):
             err += dx
             y1 += sy
     #  matrix[y1][x1] = color
+
+
+def color_swap(proj):
+    sw = proj["Params"]["PrimaryColor"]
+    proj["Params"]["PrimaryColor"] = proj["Params"]["SecondaryColor"]
+    proj["Params"]["SecondaryColor"] = sw
