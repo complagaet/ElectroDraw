@@ -244,7 +244,7 @@ class Screens:
                 L_MOUSE_HOLD = False
         else:
             scr.blit(IMG['Backward'], BACKWARD_LT)
-        if CTRL_Z_POS != len(PROJ['Params']['History']) - 1 and len(PROJ['Params']['History']) != 0:
+        if CTRL_Z_POS < len(PROJ['Params']['History']) - 1 and len(PROJ['Params']['History']) != 0:
             scr.blit(IMG['ForwardFocused'], FORWARD_LT)
             if (
                     IN_check_2D(FORWARD_LT,
@@ -345,9 +345,11 @@ def CTRL_Z(action):
             CTRL_Z_POS -= 1
 
     elif action == "FORWARD":
-        if CTRL_Z_POS != len(history) - 1:
+        if CTRL_Z_POS < len(history) - 1:
             PROJ['Draw'] = copy.deepcopy(history[CTRL_Z_POS + 1])
             CTRL_Z_POS += 1
+
+    print(CTRL_Z_POS, len(history))
 
 
 pygame.init()
