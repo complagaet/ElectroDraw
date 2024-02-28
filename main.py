@@ -335,6 +335,16 @@ class Screens:
                 L_MOUSE_HOLD = False
 
 
+def CTRL_S():
+    screen.fill(CL['BG'])
+    screens.proj_header(PROJ['Name'])
+    screens.alert(IMG['EDIcoGUI'], LANG['ED'], f"{LANG['Wait']}", "BGFocus")
+    pygame.display.flip()
+    if PROJ['CanvasSize'][0] >= 128:
+        user_save_png(PROJ, 10)
+    else:
+        user_save_png(PROJ, 100)
+
 def CTRL_Z(action):
     global CTRL_Z_POS
     history = PROJ['Params']['History']
@@ -527,8 +537,12 @@ while running:
                 if event.scancode == 28 and CTRL_HOLD:
                     CTRL_Z('FORWARD')
 
-                if event.scancode == 22:
+                if event.scancode == 22 and not CTRL_HOLD:
                     color_swap(PROJ)
+
+                if event.scancode == 22 and CTRL_HOLD:
+                    CTRL_HOLD = False
+                    CTRL_S()
 
         if c == 20:
             screens.canvas(ev, PROJ['CanvasSize'], PROJ['Draw'])
@@ -619,14 +633,7 @@ while running:
         )
 
         if keys[0]:
-            screen.fill(CL['BG'])
-            screens.proj_header(PROJ['Name'])
-            screens.alert(IMG['EDIcoGUI'], LANG['ED'], f"{LANG['Wait']}", "BGFocus")
-            pygame.display.flip()
-            if PROJ['CanvasSize'][0] >= 128:
-                user_save_png(PROJ, 10)
-            else:
-                user_save_png(PROJ, 100)
+            CTRL_S()
 
         elif keys[1]:
             LOCATION_SUB = ""
