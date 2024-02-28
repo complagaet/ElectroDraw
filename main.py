@@ -623,7 +623,10 @@ while running:
             screens.proj_header(PROJ['Name'])
             screens.alert(IMG['EDIcoGUI'], LANG['ED'], f"{LANG['Wait']}", "BGFocus")
             pygame.display.flip()
-            user_save_png(PROJ, 100)
+            if PROJ['CanvasSize'][0] >= 128:
+                user_save_png(PROJ, 10)
+            else:
+                user_save_png(PROJ, 100)
 
         elif keys[1]:
             LOCATION_SUB = ""
