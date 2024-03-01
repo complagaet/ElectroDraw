@@ -345,6 +345,7 @@ def CTRL_S():
     else:
         user_save_png(PROJ, 100)
 
+
 def CTRL_Z(action):
     global CTRL_Z_POS
     history = PROJ['Params']['History']
